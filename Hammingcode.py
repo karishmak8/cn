@@ -1,41 +1,53 @@
-div=list(map(int,input().split())) 
+import random 
+import copy
 data=list(map(int,input().split()))
-n=len(div)
-data1=data+[0]*(n-1)
-def xor(top,down,n):
-    ret=[]
-    for i in range(n):
-        if(top[i]==down[i]):
-            ret.insert(i,0)
-        else:
-            ret.insert(i,1)
-    return ret[1:]        
-def division(data1):
-    r=data1[0:n]
-    while(len(data1)>=n):
-        if(r[0]==1):
-            r=xor(r,div,n)
-            if(len(data1)>n):
-                r=r+[data1[n]]
-                data1.pop(n)
-            else:
+n=len(data)
+plist=[]
+
+p=0
+for p in range(n):
+    if(2**p>=p+n+1):
+        break 
+    
+for i in range(p):
+    arr=[]
+    for j in range(2*i,n+p+1,2*(i+1)):
+        for k in range(j,j+2**i):
+            if k>n+p:
                 break
-            
-           
-        if(r[0]==0):
-            r=xor(r,[0]*n,n) 
-            if(len(data1)>n):
-                r=r+[data1[n]]
-                data1.pop(n)
-            else:
-                break
-    return r 
-result=division(data1)
-sender_data=data+result 
-print("Data from sender: ",sender_data)
-result=division(sender_data) 
-print("resultant from reciever: ",result)
-if(1 not in result):
-    print("no error") 
+            arr.append(k)
+    plist.append(arr) 
+
+for i in range(p):
+    data.insert(2**i-1,0)
+
+p_cpy = copy.deepcopy(plist)
+
+for i in range(p):
+    for j in range(len(plist[i])):
+        plist[i][j] = data[plist[i][j]-1] 
+    if sum(plist[i])%2==0:
+        data[2**i-1]=0        
+    else:
+        data[2**i-1]=1
+    
+print("Hamming code generated is ",data)
+rand=int(input("enter the position:"))
+print("Changing position",rand+1,'to 0')
+
+data[rand]=0
+pos="" 
+for i in range(p):
+    for j in range(len(p_cpy[i])):
+        p_cpy[i][j] = data[p_cpy[i][j]-1]     
+    
+    if sum(p_cpy[i])%2==0:
+        pos='0'+pos
+    else:
+        pos='1'+pos 
+
+
+if '1' not in pos:
+    print("No Error")
 else:
-    print("error")
+    print("Binary position to be corrected is ",pos)

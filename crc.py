@@ -1,31 +1,41 @@
-def xor(a,b):
-    c = []
-    for i in range(len(a)):
-        if(a[i]==b[i]):
-            c.append('0')
-        else :
-            c.append('1')
-    return c
-divisor = list(input())
-dividend = list(input())
-crc = dividend.copy()
-divisor_len  = len(divisor)
-dividend += ['0']*(divisor_len-1)
-q = []
-dividend_len = len(dividend)
-for i in range(divisor_len,dividend_len+1):
-    if(dividend[0] == '1'):
-       c = xor(dividend[0:divisor_len],divisor)
-       for i in range(divisor_len):
-           dividend[i] = c[i]
-       dividend.pop(0)
-       q.append('1')
-    else :
-        dividend.pop(0)
-        q.append('0')
-crc = crc+dividend
-print(crc)
-
-
-# 1011
-# 10110110
+div=list(map(int,input().split())) 
+data=list(map(int,input().split()))
+n=len(div)
+data1=data+[0]*(n-1)
+def xor(top,down,n):
+    ret=[]
+    for i in range(n):
+        if(top[i]==down[i]):
+            ret.insert(i,0)
+        else:
+            ret.insert(i,1)
+    return ret[1:]        
+def division(data1):
+    r=data1[0:n]
+    while(len(data1)>=n):
+        if(r[0]==1):
+            r=xor(r,div,n)
+            if(len(data1)>n):
+                r=r+[data1[n]]
+                data1.pop(n)
+            else:
+                break
+            
+           
+        if(r[0]==0):
+            r=xor(r,[0]*n,n) 
+            if(len(data1)>n):
+                r=r+[data1[n]]
+                data1.pop(n)
+            else:
+                break
+    return r 
+result=division(data1)
+sender_data=data+result 
+print("Data from sender: ",sender_data)
+result=division(sender_data) 
+print("resultant from reciever: ",result)
+if(1 not in result):
+    print("no error") 
+else:
+    print("error")
